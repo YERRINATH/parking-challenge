@@ -6,22 +6,26 @@ class ParkingLot:
         self.square_footage = square_footage
         self.parking_spot_size = 96  # 8x12
         self.spots = []
+        self.available_spots = []  # Track available spots
 
         # Calculate the number of parking spots based on the square footage
         self.num_spots = square_footage // self.parking_spot_size
 
-        # Initialize the parking lot array with empty values
-        for _ in range(self.num_spots):
+        # Initialize the parking lot array with empty values and available spots
+        for i in range(self.num_spots):
             self.spots.append(None)
+            self.available_spots.append(i)
 
     def park_car(self, car, spot_number):
         if self.spots[spot_number] is not None:
             return f"Car with license plate {car.license_plate} failed to park in spot {spot_number} as it is already occupied."
-
         else:
             self.spots[spot_number] = car
+            self.available_spots.remove(spot_number)  # Remove the spot from available spots
             return f"Car with license plate {car.license_plate} parked successfully in spot {spot_number}."
 
+    def get_available_spots(self):
+        return self.available_spots  # Return the list of available spots
 
 class Car:
     def __init__(self, license_plate):
@@ -48,9 +52,8 @@ def main():
 
     # Park the cars in the parking lot until the lot is full or all cars are parked
     parked_cars = 0
-    available_spots = parking_lot.spots.count(None)  # Count initially available spots
     for car in cars:
-        if available_spots == 0 or parked_cars == num_of_cars:
+        if parked_cars == parking_lot.num_spots:
             break
 
         while True:
@@ -67,15 +70,17 @@ def main():
             if "failed to park in spot" in parking_status:
                 break
 
-        available_spots = parking_lot.spots.count(None)  # Update available spots after each parking attempt
-
-    if parked_cars == num_of_cars:
+    # Count the number of available spots after parking all cars
+    available_spots = parking_lot.spots.count(None)
+    available_spots_list = parking_lot.get_available_spots()  # Get available spots list
+    if parked_cars == parking_lot.num_spots:
         print("All available cars have been parked.")
     else:
         print(f"Parking space full. {parked_cars} cars parked.")
 
     if available_spots > 0:
         print(f"Number of spots still available: {available_spots}")
+        print(f"Available spots: {available_spots_list}")
 
 if __name__ == "__main__":
     main()
