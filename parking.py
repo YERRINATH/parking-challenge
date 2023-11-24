@@ -48,8 +48,9 @@ def main():
 
     # Park the cars in the parking lot until the lot is full or all cars are parked
     parked_cars = 0
+    available_spots = parking_lot.spots.count(None)  # Count initially available spots
     for car in cars:
-        if parked_cars == parking_lot.num_spots:
+        if available_spots == 0 or parked_cars == num_of_cars:
             break
 
         while True:
@@ -66,9 +67,9 @@ def main():
             if "failed to park in spot" in parking_status:
                 break
 
-    # Count the number of available spots after parking all cars
-    available_spots = parking_lot.spots.count(None)
-    if parked_cars == parking_lot.num_spots:
+        available_spots = parking_lot.spots.count(None)  # Update available spots after each parking attempt
+
+    if parked_cars == num_of_cars:
         print("All available cars have been parked.")
     else:
         print(f"Parking space full. {parked_cars} cars parked.")
